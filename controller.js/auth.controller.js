@@ -8,9 +8,9 @@ exports.checkUsername = async (req, res) => {
 
     try {
         if (await User.findOne({ username: username })) {
-            return res.status(400).json({ success: false, error: "This username already exists." });
+            return res.status(200).json({ success: false, message: "please use another username" });
         }
-        return res.status(200).json({ success: true, message: "Done" });
+        return res.status(200).json({ success: true, message: "done" });
 
     } catch (error) {
         res.status(500).json({ success: false, error: "Server Error" });
