@@ -63,6 +63,32 @@ exports.getNoteById = async (req, res) => {
     }
 };
 
+exports.getNotesByTag = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { tag } = req.params;
+
+        const notes = await Note.find({ user: id });
+
+        const notesByTag = notes
+            .filter(note => decrypt(note.tag, KEY) === tag)
+            .map(note => ({
+                id: note._id,
+                title: decrypt(note.title, KEY),
+                description: decrypt(note.description, KEY),
+                tag: decrypt(note.tag, KEY),
+                date: note.date
+            }));
+
+        res.json(notesByTag);
+
+        
+    } catch (err) {
+        console.error("Error:", err.message);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
 exports.updateNote = async (req, res) => {
     const { title, description, tag, date } = req.body;
 
@@ -80,7 +106,7 @@ exports.updateNote = async (req, res) => {
         }
 
         note = await Note.findByIdAndUpdate(req.params.id, { $set: newNote }, { new: true });
-        
+
         res.json(note);
     } catch (err) {
         console.error(err.message);
