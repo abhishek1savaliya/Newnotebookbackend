@@ -40,6 +40,29 @@ exports.getAllNote = async (req, res) => {
     }
 };
 
+exports.getNoteById = async (req, res) => {
+
+    try {
+
+        let note = await Note.findById(req.params.id);
+        if (!note) {
+            return res.status(404).json({ msg: 'Note not found' });
+        }
+
+        res.json({
+            id: note._id,
+            title: decrypt(note.title, KEY),
+            description: decrypt(note.description, KEY),
+            tag: decrypt(note.tag, KEY),
+            date: note.date
+        });
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
 exports.updateNote = async (req, res) => {
     const { title, description, tag } = req.body;
 
