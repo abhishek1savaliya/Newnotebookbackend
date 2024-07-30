@@ -64,7 +64,7 @@ exports.getNoteById = async (req, res) => {
 };
 
 exports.updateNote = async (req, res) => {
-    const { title, description, tag } = req.body;
+    const { title, description, tag, date } = req.body;
 
     try {
 
@@ -72,6 +72,7 @@ exports.updateNote = async (req, res) => {
         if (title) { newNote.title = encrypt(title, KEY); }
         if (description) { newNote.description = encrypt(description, KEY); }
         if (tag) { newNote.tag = encrypt(tag, KEY); }
+        if (date) { newNote.date = date }
 
         let note = await Note.findById(req.params.id);
         if (!note) {
@@ -79,6 +80,7 @@ exports.updateNote = async (req, res) => {
         }
 
         note = await Note.findByIdAndUpdate(req.params.id, { $set: newNote }, { new: true });
+        
         res.json(note);
     } catch (err) {
         console.error(err.message);
