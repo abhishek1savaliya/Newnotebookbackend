@@ -4,7 +4,7 @@ const { hashPassword, comparePassword } = require('../utils/password');
 const { generateToken } = require('../utils/jwtAuth');
 
 exports.checkUsername = async (req, res) => {
-    const { username} = req.body;
+    const { username } = req.body;
 
     try {
         if (await User.findOne({ username: username })) {
@@ -18,7 +18,7 @@ exports.checkUsername = async (req, res) => {
 };
 
 exports.createUser = async (req, res) => {
-    const { fName, lName, username, email, password } = req.body;
+    const { fName, lName, image, username, email, password } = req.body;
 
     try {
         if (await User.findOne({ $or: [{ email }, { username }] })) {
@@ -27,7 +27,7 @@ exports.createUser = async (req, res) => {
 
         const hashedPassword = await hashPassword(password);
 
-        const user = await User.create({ fName, lName, username, email, password: hashedPassword });
+        const user = await User.create({ fName, lName, image, username, email, password: hashedPassword });
         const authToken = generateToken({ user: { id: user.id } });
 
         res.json({ success: true, authToken });
